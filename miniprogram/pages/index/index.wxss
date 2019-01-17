@@ -1,13 +1,102 @@
 /**index.wxss**/
 
 page {
-  background: #f6f6f6;
+  background: #fff;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  color: #777;
 }
+.container{
+    width: 100%;
+    height: 100%;
+    padding-bottom: 300rpx;
+    padding-top: 111rpx;
+    position: absolute;
+    left: 0;
+    right: 0;
+    justify-content: center;
+    align-items: center;
+}
+.bg-canvas{
+    /* margin-top: 110px;
+    margin-bottom: 300px; */
+    /* position: fixed;
+    left: 0;
+    z-index: -88;
+    bottom: 300rpx; */
+}
+.bg-preview{
+    position: absolute;
+    left:0;
+    right: 0;
+}
+.img-loaction{
+    width: 24rpx;
+    height: 24rpx;
+    position: absolute;
+    top: 0;
+    left: -28rpx;
+}
+.location{
+    position: absolute;
+    top:0;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    font-size: 24rpx;
+    line-height: 24rpx;
+}
+.text-img{
+    position: relative;
+}
+.period{
+    flex-direction: row;
+    justify-content: center;
+    position: absolute;
+    left: 60rpx;
+    top: 20rpx;
+    text-align: center;
+    font-size: 34rpx;
+}
+.bottom-container{
+    position: absolute;
+    bottom: 30rpx;
+    left: 60rpx;
+    right: 60rpx;
+    flex-direction: column;
+    justify-content: flex-start;
 
-.userinfo, .uploader, .tunnel {
+}
+.air-quality{
+    font-size: 30rpx;
+}
+.weather{
+    font-size: 64rpx;
+    margin: 16rpx 0;
+}
+.suit{
+    position: relative;
+    align-items: center;
+    justify-content: center;
+}
+.suit-word{
+    font-size: 60rpx;
+    top:0;
+    left:0;
+    position: absolute;
+}
+.suit-list{
+    font-size: 32rpx;
+    padding-left: 100rpx;
+    flex-direction: row;
+    justify-content: flex-start;
+}
+.suit-item{
+    display: inline-block;
+    margin-right: 25rpx;
+}
+/* .userinfo, .uploader, .tunnel {
   margin-top: 40rpx;
   height: 140rpx;
   width: 100%;
@@ -134,4 +223,4 @@ page {
   font-size: 24rpx;
   line-height: 36rpx;
   word-break: break-all;
-}
+} */

@@ -1,18 +1,13 @@
 {
   "pages": [
-    "pages/index/index",
-    "pages/userConsole/userConsole",
-    "pages/storageConsole/storageConsole",
-    "pages/databaseGuide/databaseGuide",
-    "pages/addFunction/addFunction",
-    "pages/deployFunctions/deployFunctions",
-    "pages/chooseLib/chooseLib"
+    "pages/index/index"
   ],
   "window": {
     "backgroundColor": "#FFFFFF",
-    "backgroundTextStyle": "light",
+    "backgroundTextStyle": "black",
     "navigationBarBackgroundColor": "#FFFFFF",
-    "navigationBarTitleText": "吃货老黄历",
-    "navigationBarTextStyle": "black"
+    "navigationBarTitleText": "吃货大黄历",
+    "navigationBarTextStyle": "black",
+    "enablePullDownRefresh": true
   }
 }
