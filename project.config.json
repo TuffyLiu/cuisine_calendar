@@ -10,8 +10,10 @@
 	},
 	"appid": "wxaacc279b50d95a0e",
 	"projectname": "mini-program",
-	"libVersion": "2.3.2",
+	"libVersion": "2.6.2",
 	"compileType": "miniprogram",
+	"simulatorType": "wechat",
+	"simulatorPluginLibVersion": {},
 	"condition": {
 		"search": {
 			"current": -1,

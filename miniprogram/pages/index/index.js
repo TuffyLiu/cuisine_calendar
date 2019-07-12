@@ -6,11 +6,6 @@ const db = wx.cloud.database();
 const day = db.collection('day');
 const food = db.collection('food');
 const _ = db.command;
-let ctx = null;
-let lastX = 100;
-let lastY = 100;
-let direction = true;
-let lineWidth = 2;
 let imgList = [];
 let defaulImgList = [];
 let imgIndex = 0;
@@ -26,9 +21,18 @@ Page({
         weather: '',
         suitList: [],
         imgUrl: '',
-        date: ''
+        date: '',
+        dateList: [],
+        menuList: [],
+        weatherList: [],
+        currentIndex: 0
     },
     onLoad: function () {
+        // wx.getSystemInfo({
+        //     success(res) {
+        //         // console.log(res)
+        //     }
+        // });
         const qqmapsdk = new QQMapWx({
             key: 'IHEBZ-T2IRS-O5EOK-6MTX6-5LTC5-4CBMT'
         });
@@ -51,24 +55,15 @@ Page({
                 });
             }
         });
-        // wx.getSystemInfo({
-        //      success (res) {
-        //          windowWidth = res.windowWidth;
-        //          windowHeight = res.windowHeight;
-        //      }
-        // });
     },
-    onReady: function () {
-        // ctx = wx.createCanvasContext('drawCanvas');
-    },
+    onReady: function () {},
     onShow: function () {
         this.setPeriod();
         if (this.data.city !== '') {
             this.getWeatherData(this.data.city);
         }
-        this.freshData();
     },
-    freshData: function() {
+    freshData: function () {
         const date = this.getFromatDay(new Date());
         if (this.data.date !== date) {
             this.setData({
@@ -78,93 +73,64 @@ Page({
         }
     },
     onPullDownRefresh: function () {
-        this.setPeriod();
-        // this.getWeatherData(this.data.city);
-        const date = this.getFromatDay(new Date());
-        if (this.data.date !== date || imgList.length.length === 0) {
-            this.freshData();
-            wx.stopPullDownRefresh();
-        } else {
-            wx.stopPullDownRefresh({
-                success: () => {
-                    if (imgList.length > 0) {
-                        imgIndex++;
-                        if (imgIndex > imgList.length - 1) {
-                            imgIndex = 0;
-                        }
-                        console.log(imgIndex);
-                        setTimeout(() => {
-                            this.setData({
-                                imgUrl: imgList[imgIndex]
-                            });
-                        }, 580);
-                    }
-                }
-            });
-        }
+        let data = {};
+        const activeData = this.data.dateList[this.data.currentIndex];
+        data[`dateList[${this.data.currentIndex}].active`] = activeData.active ? (activeData.active + 1) % activeData.food.length : 1;
+        this.setData(data);
+        wx.stopPullDownRefresh();
+    },
+    intervalChange: function (e) {
+        const data = this.data.dateList[e.detail.current];
+        const title = data.lunarYear + '年' + data.lunar;
+        this.setDateBarTitle(title);
+        this.data.currentIndex = e.detail.current;
     },
     getFoodData: function () {
         wx.showLoading({
             title: '加载美食中...',
         });
-        const date = this.getFromatDay(new Date());
-        day.doc(date).get({
+        const dateList = this.getDayList();
+        day.where({
+            _id: _.in(dateList),
+        }).get({
             success: res => {
+                this.data.menuList = res.data;
                 wx.hideLoading();
-                const data = res.data;
-                const title = data.lunarYear + '年' + data.lunar;
-                this.setDateBarTitle(title);
-                this.setData({
-                    suitList: data.food,
-                    imgUrl: this.getFileUrl(data.food[0])
-                });
-                setTimeout(() => {
-                    this.getFoodImage(data.food);
-                }, 580);
+                const {
+                    menuList,
+                    weatherList
+                } = this.data;
+                if (menuList.length > 0 && weatherList.length > 0) {
+                    let dateList = [];
+                    menuList.forEach((item, index) => {
+                        dateList.push(Object.assign({}, item, weatherList[index]));
+                    });
+                    this.setData({
+                        dateList: dateList
+                    });
+                }
             },
             fail: res => {
                 wx.showToast({
-                      title: '网络拥挤，加载失败！',
-                      icon: 'none',
-                      duration: 10000
+                    title: '网络拥挤，加载失败！',
+                    icon: 'none',
+                    duration: 10000
                 });
             }
         });
     },
-    getFoodImage: function (foods) {
-        // this.downloadImage(foods.shift());
-        // defaulImgList = foods;
-        foods.forEach(item => {
-            this.downloadImage(item);
-        });
-    },
-    getFileUrl: function (name) {
-        return 'cloud://dev-37644f.6465-dev-37644f/image/' + name + '.jpg';
-    },
-    downloadImage: function (fileID) {
-        fileID = this.getFileUrl(fileID);
-        wx.cloud.downloadFile({
-            fileID: fileID,
-            success: res => {
-                console.log(fileID);
-                imgList.push(res.tempFilePath);
-            },
-            fail: res => {
-                console.log(fileID, res);
-                imgList.push(fileID);
-            }
-        });
-    },
-    // drawImage: function (resource) {
-    //     let paintWidth = windowWidth;
-    //     console.log(windowWidth, windowHeight, windowHeight - windowWidth);
-    //     let painPading = 0;
-    //     ctx.drawImage(resource, 0, 0, 500, 500, 0, painPading, paintWidth, paintWidth);
-    //     ctx.draw(true);
-    // },
     getFromatDay: function (date) {
-        return '2018-12-28';
-        // return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
+        let formatNumber = function (num) {
+            return num > 9 ? num : '0' + num;
+        };
+        return date.getFullYear() + '-' + formatNumber((date.getMonth() + 1)) + '-' + formatNumber(date.getDate());
+    },
+    getDayList: function () {
+        let list = [];
+        for (let i = 0; i < 7; i++) {
+            list.push(this.getFromatDay(new Date(new Date().getTime() + i * 24 * 60 * 60 * 1000)));
+        }
+        return list;
     },
     imageErro: function () {
         this.setData({
@@ -179,13 +145,14 @@ Page({
                 city: city
             },
             success: res => {
-                this.setAirQuality(res.data.data);
+                this.data.weatherList = res.data.data;
+                this.freshData();
             },
             fail: res => {
                 wx.showToast({
-                      title: '天气加载失败，请稍后再试！',
-                      icon: 'fail',
-                      duration: 2000
+                    title: '天气加载失败，请稍后再试！',
+                    icon: 'fail',
+                    duration: 2000
                 });
             }
         });
@@ -223,15 +190,6 @@ Page({
         this.setData({
             period: period,
             adjecttive: adjecttive
-        });
-    },
-    setAirQuality: function (data) {
-        const todayWeather = data[0];
-        const airQuality = todayWeather.air + ' · 空气质量' + todayWeather.air_level;
-        const weather = todayWeather.tem1 + ' ' + todayWeather.wea;
-        this.setData({
-            airQuality: airQuality,
-            weather: weather
         });
     }
 })

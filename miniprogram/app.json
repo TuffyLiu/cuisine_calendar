@@ -4,10 +4,16 @@
   ],
   "window": {
     "backgroundColor": "#FFFFFF",
-    "backgroundTextStyle": "black",
+    "backgroundTextStyle": "dark",
     "navigationBarBackgroundColor": "#FFFFFF",
     "navigationBarTitleText": "吃货大黄历",
     "navigationBarTextStyle": "black",
     "enablePullDownRefresh": true
-  }
+  },
+  "permission": {
+    "scope.userLocation": {
+      "desc": "你的位置信息将用于获取天气预报"
+    }
+  },
+  "sitemapLocation": "sitemap.json"
 }

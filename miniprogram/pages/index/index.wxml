@@ -1,27 +1,25 @@
-<view class="container">
-    <image class="bg-preview" style="width: 750rpx; height: 750rpx" src="{{imgUrl}}" mode="widthFix" binderror="imageErro"></image>
-    <!-- <view class="bg-canvas" style="width: 750rpx; height: 750rpx">
-        <canvas class="bg-canvas" style="width: 750rpx; height: 750rpx"  canvas-id="drawCanvas"></canvas>
-    </view> -->
-    <view class="location">
-        <view class="text-img">
-            <image class="img-loaction" src="../../images/location.png" mode="widthFix"></image>
-            <text>{{city}} </text>
-        </view>
-    </view>
-    <view class="period">
-        <view>{{period}}</view>
-        <view>{{adjecttive}}</view>
-    </view>
-    <view class="bottom-container">
-        <view class="air-quality">{{airQuality}}</view>
-        <view class="weather">{{weather}}</view>
-        <view class="suit">
-            <text class="suit-word">宜 </text>
-            <view class="suit-list">
-                <view class="suit-item" wx:key="{{index}}" wx:for="{{suitList}}">{{item}}</view>
+<swiper class="container-swiper" bindchange="intervalChange">
+    <swiper-item class="swiper-item" wx:for="{{dateList}}" wx:for-index="idx" wx:key="item._id">
+            <image class="bg-preview" style="width: 750rpx; height: 750rpx" src="{{'cloud://dev-37644f.6465-dev-37644f/image/' + item.food[item.active ? item.active : 0] + '.jpg'}}" mode="widthFix" binderror="imageErro"></image>
+            <view class="location">
+                <view class="text-img">
+                    <image class="img-loaction" src="../../images/location.png" mode="widthFix"></image>
+                    <text>{{city}} </text>
+                </view>
             </view>
-        </view>
-
-    </view>
-</view>
+          <view class="period">
+              <view>{{idx === 0 ? period : item.week}}</view>
+              <view>{{idx === 0 ? adjecttive : item.day}}</view>
+          </view>
+          <view class="bottom-container">
+              <view class="air-quality">{{item.air? (item.air  + ' · 空气质量' + item.air_level) : (item.win[0] + ' · ' + item.win_speed)}}</view>
+              <view class="weather">{{item.tem1 + ' ' + item.wea}}</view>
+              <view class="suit">
+                  <text class="suit-word">宜 </text>
+                  <view class="suit-list">
+                      <view class="suit-item" wx:key="{{index}}" wx:for-item="itemName" wx:for="{{item.food}}">{{itemName}}</view>
+                  </view>
+              </view>
+          </view>
+    </swiper-item>
+</swiper>
