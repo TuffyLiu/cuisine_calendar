@@ -117,6 +117,7 @@ Page({
                     this.setData({
                         dateList: dateList
                     });
+                    this.setDateBarTitle(dateList[0].lunarYear + '年' + dateList[0].lunar);
                 }
             },
             fail: res => {
