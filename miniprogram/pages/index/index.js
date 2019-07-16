@@ -25,7 +25,8 @@ Page({
         dateList: [],
         menuList: [],
         weatherList: [],
-        currentIndex: 0
+        currentIndex: 0,
+        loading: false
     },
     onLoad: function () {
         // wx.getSystemInfo({
@@ -73,11 +74,19 @@ Page({
         }
     },
     onPullDownRefresh: function () {
+        this.data.loading = true;
         let data = {};
         const activeData = this.data.dateList[this.data.currentIndex];
         data[`dateList[${this.data.currentIndex}].active`] = activeData.active ? (activeData.active + 1) % activeData.food.length : 1;
         this.setData(data);
-        wx.stopPullDownRefresh();
+    },
+    imageLoad: function () {
+        if (this.data.loading) {
+            setTimeout(() => {
+                wx.stopPullDownRefresh();
+            }, 100);
+            this.data.loading = false;
+        }
     },
     intervalChange: function (e) {
         const data = this.data.dateList[e.detail.current];
