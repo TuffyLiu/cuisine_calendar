@@ -4,14 +4,7 @@ const QQMapWx = require('../../libs/qqmap-wx-jssdk1.0/qqmap-wx-jssdk.js');
 wx.cloud.init();
 const db = wx.cloud.database();
 const day = db.collection('day');
-const food = db.collection('food');
 const _ = db.command;
-let imgList = [];
-let defaulImgList = [];
-let imgIndex = 0;
-let windowWidth = 375;
-let windowHeight = 603;
-let requestTime = 0; // ../../images/404.png
 Page({
     data: {
         city: '',
@@ -84,7 +77,7 @@ Page({
         if (this.data.loading) {
             setTimeout(() => {
                 wx.stopPullDownRefresh();
-            }, 100);
+            }, 1);
             this.data.loading = false;
         }
     },
@@ -103,6 +96,7 @@ Page({
             _id: _.in(dateList),
         }).get({
             success: res => {
+                console.log(res);
                 this.data.menuList = res.data;
                 wx.hideLoading();
                 const {
@@ -152,7 +146,9 @@ Page({
             url: 'https://www.tianqiapi.com/api/',
             data: {
                 version: 'v1',
-                city: city
+                city: city,
+                appid: '23587788',
+                appsecret: 'NQDQ4MZ9'
             },
             success: res => {
                 this.data.weatherList = res.data.data;
