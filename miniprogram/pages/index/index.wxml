@@ -1,10 +1,10 @@
-<swiper class="container-swiper" bindchange="intervalChange">
-    <swiper-item class="swiper-item" wx:for="{{dateList}}" wx:for-index="idx" wx:key="_id">
+<swiper wx:if="{{permision}}" class="container-swiper" bindchange="intervalChange" current="{{currentIndex}}" >
+    <swiper-item class="swiper-item"  wx:for="{{dateList}}" wx:for-index="idx" wx:key="_id" >
             <image class="bg-preview" style="width: 750rpx; height: 750rpx" bindload="imageLoad" src="{{'cloud://dev-37644f.6465-dev-37644f/image/' + item.food[item.active ? item.active : 0] + '.jpg'}}" mode="widthFix" binderror="imageErro"></image>
             <view class="location">
                 <view class="text-img">
                     <image class="img-loaction" src="../../images/location.png" mode="widthFix" ></image>
-                    <text>{{city}} </text>
+                    <text>{{city}}</text>
                 </view>
             </view>
           <view class="period">
@@ -12,8 +12,9 @@
               <view>{{idx === 0 ? adjecttive : item.day}}</view>
           </view>
           <view class="bottom-container">
-              <view class="air-quality">{{item.air? (item.air  + ' · 空气质量' + item.air_level) : (item.win[0] + ' · ' + item.win_speed)}}</view>
-              <view class="weather">{{item.tem1 + ' ' + item.wea}}</view>
+              <view wx:if="{{item.air || item.win}}" class="air-quality">{{item.air? (item.air  + ' · 空气质量' + item.air_level) : (item.win[0] + ' · ' + item.win_speed)}}</view>
+              <view wx:if="{{item.tem1 || item.wea}}" class="weather">{{item.tem1 + ' ' + item.wea}}</view>
+              <view wx:else class="quotes">{{item.quotes}}</view>
               <view class="suit">
                   <text class="suit-word">宜 </text>
                   <view class="suit-list">
@@ -23,3 +24,11 @@
           </view>
     </swiper-item>
 </swiper>
+
+<view  wx:else class="miss">
+    <image class="img" src="../../images/404.png" mode="widthFix" ></image>
+    <text class="tip">您没有授权位置信息!</text>
+    <text class="tip">我们无法获取您的天气情况哦~~</text>
+    <button class="btn" type="primary" open-type="openSetting" bindopensetting="onLoad" lang="zh_CN" >去授权</button>
+</view>
+

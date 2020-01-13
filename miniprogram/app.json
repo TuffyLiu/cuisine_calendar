@@ -6,7 +6,7 @@
     "backgroundColor": "#FFFFFF",
     "backgroundTextStyle": "dark",
     "navigationBarBackgroundColor": "#FFFFFF",
-    "navigationBarTitleText": "吃货大黄历",
+    "navigationBarTitleText": "我是吃货",
     "navigationBarTextStyle": "black",
     "enablePullDownRefresh": true
   },
