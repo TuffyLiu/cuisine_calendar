@@ -90,6 +90,7 @@ page {
     padding-left: 100rpx;
     flex-direction: row;
     justify-content: flex-start;
+    min-height: 48px;
 }
 .suit-item {
     display: inline-block;

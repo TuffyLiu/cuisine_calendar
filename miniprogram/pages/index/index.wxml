@@ -1,6 +1,6 @@
 <swiper wx:if="{{permision}}" class="container-swiper" bindchange="intervalChange" current="{{currentIndex}}" >
     <swiper-item class="swiper-item"  wx:for="{{dateList}}" wx:for-index="idx" wx:key="_id" >
-            <image class="bg-preview" style="width: 750rpx; height: 750rpx" bindload="imageLoad" src="{{'cloud://dev-37644f.6465-dev-37644f/image/' + item.food[item.active ? item.active : 0] + '.jpg'}}" mode="widthFix" binderror="imageErro"></image>
+            <image class="bg-preview" style="width: 750rpx; height: 750rpx" bindload="imageLoad" src="{{item.food[item.active ? item.active : 0] ? 'cloud://dev-37644f.6465-dev-37644f/image/' + item.food[item.active ? item.active : 0] + '.jpg' : '../../images/loading.png'}}" mode="widthFix" binderror="imageErro"></image>
             <view class="location">
                 <view class="text-img">
                     <image class="img-loaction" src="../../images/location.png" mode="widthFix" ></image>
