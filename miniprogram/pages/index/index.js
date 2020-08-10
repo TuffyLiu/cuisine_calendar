@@ -3,8 +3,9 @@ const app = getApp();
 const QQMapWx = require('../../libs/qqmap-wx-jssdk1.0/qqmap-wx-jssdk.js');
 wx.cloud.init();
 const db = wx.cloud.database();
-const day = db.collection('day');
+// const day = db.collection('day');
 const food = db.collection('food');
+const lunar = db.collection('lunar');
 
 const _ = db.command;
 Page({
@@ -194,6 +195,18 @@ Page({
         return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
     },
     getCalendarData: function (date) {
+        return new Promise((resolve) => {
+            lunar.doc(this.getFromatDay(date)).get({
+                success: (res) => {
+                    resolve(res.data);
+                },
+                fail: () => {
+                    resolve(this.getCalendar(date));
+                }
+            });
+        });
+    },
+    getCalendar: function (date) {
         return new Promise((resolve, reject) => {
             wx.request({
                 url: 'https://v.juhe.cn/calendar/day',
@@ -202,7 +215,17 @@ Page({
                     key: 'bbe3094e5135f8fe88b859b47b6aaff4'
                 },
                 success: (res) => {
-                    resolve(res.data.result.data);
+                    if (res.data.result) {
+                        resolve(res.data.result.data);
+                        this.saveCalendar(date, res.data.result.data);
+                    } else {
+                        reject(res);
+                        wx.showToast({
+                            title: '农历日历加载失败，请稍后再试！',
+                            icon: 'fail',
+                            duration: 2000
+                        });
+                    }
                 },
                 fail: (res) => {
                     reject(res);
@@ -215,7 +238,21 @@ Page({
             });
         });
     },
-
+    saveCalendar: function (date, data) {
+        lunar.add({
+            // data 字段表示需新增的 JSON 数据
+            data: {
+                _id: this.getFromatDay(date),
+                lunar: data.lunar,
+                lunarYear: data.lunarYear,
+                weekday: data.weekday
+            },
+            success: function (res) {
+                // res 是一个对象，其中有 _id 字段标记刚创建的记录的 id
+                console.log(res);
+            }
+        });
+    },
     getRandom: function (min, max) {
         return Math.floor(Math.random() * (max - min) + min);
     },
@@ -265,13 +302,13 @@ Page({
 
     intervalChange: function (e) {
         const data = this.data.dateList[e.detail.current] || {};
-        if (!data.lunar) {
+        if (!data.food || data.food.length === 0) {
             this.getOneDate(e.detail.current);
         } else {
             const title = data.lunarYear + '年' + data.lunar;
             this.setDateBarTitle(title);
         }
-        if (!this.data.dateList[e.detail.current + 1].lunar) {
+        if (!this.data.dateList[e.detail.current + 1].food || this.data.dateList[e.detail.current + 1].food.length === 0) {
             this.getOneDate(e.detail.current + 1, true);
         }
         this.data.currentIndex = e.detail.current;
