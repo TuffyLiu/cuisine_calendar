@@ -93,18 +93,18 @@ Page({
                 weather[0].food = food.map((item) => {
                     return item.name.replace('.jpg', '');
                 });
-                weather[0].lunarYear = calendar.yearname;
-                weather[0].lunar = calendar.nonglicn;
+                weather[0].lunarYear = calendar.lunarYear;
+                weather[0].lunar = calendar.lunar;
 
                 new Array(30).fill(1).forEach(() => {
                     weather.push({
-                        lunarYear: calendar.yearname
+                        lunarYear: calendar.lunarYear
                     });
                 });
                 this.setData({
                     dateList: weather
                 });
-                this.setDateBarTitle(calendar.yearname + '年' + calendar.nonglicn);
+                this.setDateBarTitle(calendar.lunarYear + '年' + calendar.lunar);
                 wx.hideLoading();
                 this.getOneDate(1, true);
             })
@@ -134,15 +134,15 @@ Page({
                     '满足身体的美食是不足够的，也得要有满足心灵的美食。——陶乐斯•戴 Dorothy Day'
                 );
                 this.data.dateList[index].quotes = quotes[this.getRandom(0, 6)];
-                this.data.dateList[index].lunarYear = calendar.yearname;
-                this.data.dateList[index].lunar = calendar.nonglicn;
-                this.data.dateList[index].week = '星期' + calendar.weekcn;
+                this.data.dateList[index].lunarYear = calendar.lunarYear;
+                this.data.dateList[index].lunar = calendar.lunar;
+                this.data.dateList[index].week = calendar.weekday;
                 this.data.dateList[index].day = this.data.dateList[index].day || Number(calendar.day.slice(-2)) + '日(' + calendar.jieqi + ')';
                 if (index > this.data.dateList.length - 5) {
                     const tamp = [];
                     new Array(30).fill(1).forEach(() => {
                         tamp.push({
-                            lunarYear: calendar.yearname
+                            lunarYear: calendar.lunarYear
                         });
                     });
                     this.data.dateList = [...this.data.dateList, ...tamp];
@@ -151,7 +151,7 @@ Page({
                     dateList: this.data.dateList
                 });
                 if (!next) {
-                    this.setDateBarTitle(calendar.yearname + '年' + calendar.nonglicn);
+                    this.setDateBarTitle(calendar.lunarYear + '年' + calendar.lunar);
                     wx.hideLoading();
                 }
             })
@@ -190,16 +190,19 @@ Page({
         };
         return date.getFullYear() + '' + formatNumber(date.getMonth() + 1) + '' + formatNumber(date.getDate());
     },
+    getFromatDay2: function (date) {
+        return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
+    },
     getCalendarData: function (date) {
         return new Promise((resolve, reject) => {
             wx.request({
-                url: 'https://tool.bitefu.net/jiari/',
+                url: 'https://v.juhe.cn/calendar/day',
                 data: {
-                    d: this.getFromatDay(date),
-                    info: '1'
+                    date: this.getFromatDay2(date),
+                    key: 'bbe3094e5135f8fe88b859b47b6aaff4'
                 },
                 success: (res) => {
-                    resolve(res.data);
+                    resolve(res.data.result.data);
                 },
                 fail: (res) => {
                     reject(res);
