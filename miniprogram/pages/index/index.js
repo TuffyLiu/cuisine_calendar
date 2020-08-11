@@ -119,8 +119,8 @@ Page({
                 title: '加载美食中...'
             });
         }
-
-        Promise.all([this.getCalendarData(new Date(new Date().getTime() + 24 * 60 * 60 * 1000 * index)), this.getFoodData()])
+        const indexDate = new Date(new Date().getTime() + 24 * 60 * 60 * 1000 * index);
+        Promise.all([this.getCalendarData(indexDate), this.getFoodData()])
             .then(([calendar, food]) => {
                 this.data.dateList[index].food = food.map((item) => {
                     return item.name.replace('.jpg', '');
@@ -138,7 +138,7 @@ Page({
                 this.data.dateList[index].lunarYear = calendar.lunarYear;
                 this.data.dateList[index].lunar = calendar.lunar;
                 this.data.dateList[index].week = calendar.weekday;
-                this.data.dateList[index].day = this.data.dateList[index].day || Number(calendar.day.slice(-2)) + '日(' + calendar.jieqi + ')';
+                this.data.dateList[index].day = this.data.dateList[index].day || calendar.holiday || this.getFromatDay3(indexDate);
                 if (index > this.data.dateList.length - 5) {
                     const tamp = [];
                     new Array(30).fill(1).forEach(() => {
@@ -194,6 +194,9 @@ Page({
     getFromatDay2: function (date) {
         return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
     },
+    getFromatDay3: function (date) {
+        return (date.getMonth() + 1) + '月' + date.getDate() + '日';
+    },
     getCalendarData: function (date) {
         return new Promise((resolve) => {
             lunar.doc(this.getFromatDay(date)).get({
@@ -245,7 +248,8 @@ Page({
                 _id: this.getFromatDay(date),
                 lunar: data.lunar,
                 lunarYear: data.lunarYear,
-                weekday: data.weekday
+                weekday: data.weekday,
+                holiday: data.holiday
             },
             success: function (res) {
                 // res 是一个对象，其中有 _id 字段标记刚创建的记录的 id
