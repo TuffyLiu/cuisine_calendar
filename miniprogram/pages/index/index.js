@@ -309,7 +309,7 @@ Page({
         if (!data.food || data.food.length === 0) {
             this.getOneDate(e.detail.current);
         } else {
-            const title = data.lunarYear + '年' + data.lunar;
+            const title = data.lunarYear + data.lunar;
             this.setDateBarTitle(title);
         }
         if (!this.data.dateList[e.detail.current + 1].food || this.data.dateList[e.detail.current + 1].food.length === 0) {
